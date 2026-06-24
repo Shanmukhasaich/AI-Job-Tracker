@@ -1,0 +1,67 @@
+<form method="POST">
+
+    <input type="text"
+           name="company"
+           value="{{ job.company }}"
+           required>
+
+    <br><br>
+
+    <input type="text"
+           name="role"
+           value="{{ job.role }}"
+           required>
+
+    <br><br>
+
+    <select name="status">
+
+        <option value="Applied"
+        {% if job.status=="Applied" %}selected{% endif %}>
+        Applied
+        </option>
+
+        <option value="Interview"
+        {% if job.status=="Interview" %}selected{% endif %}>
+        Interview
+        </option>
+
+        <option value="Rejected"
+        {% if job.status=="Rejected" %}selected{% endif %}>
+        Rejected
+        </option>
+
+        <option value="Offer"
+        {% if job.status=="Offer" %}selected{% endif %}>
+        Offer
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <label>Deadline</label>
+
+    <input type="date"
+           name="deadline"
+           value="{{ job.deadline }}">
+
+    <br><br>
+
+    <label>Interview Date</label>
+
+    <input type="date"
+           name="interview_date"
+           value="{{ job.interview_date }}">
+
+    <br><br>
+
+    <textarea name="notes">{{ job.notes }}</textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Update Job
+    </button>
+
+</form>

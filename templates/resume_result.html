@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Analysis</title>
+</head>
+<body>
+
+<h1>Resume Analysis Result</h1>
+
+<h2>ATS Score: {{ score }}%</h2>
+
+<h2>Match Score: {{ match_score }}%</h2>
+
+<hr>
+
+<h2>Detected Skills</h2>
+
+<ul>
+{% for skill in skills %}
+    <li>{{ skill }}</li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Missing Skills</h2>
+
+<ul>
+{% for skill in missing_skills %}
+    <li>{{ skill }}</li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Suggestions</h2>
+
+<ul>
+{% for item in suggestions %}
+    <li>{{ item }}</li>
+{% endfor %}
+</ul>
+
+<br>
+
+<a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

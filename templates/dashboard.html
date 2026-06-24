@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Logout -->
+    <div style="text-align: right;">
+        <a href="/logout">Logout</a>
+    </div>
+
+    <h1>📊 Job Dashboard</h1>
+
+    <!-- Add New Job -->
+
+<h2>Add New Job</h2>
+
+<form action="/add_job" method="POST">
+
+```
+<input type="text"
+       name="company"
+       placeholder="Company Name"
+       required>
+
+<br><br>
+
+<input type="text"
+       name="role"
+       placeholder="Job Role"
+       required>
+
+<br><br>
+
+<select name="status">
+    <option value="Applied">Applied</option>
+    <option value="Interview">Interview</option>
+    <option value="Rejected">Rejected</option>
+    <option value="Offer">Offer</option>
+</select>
+
+<br><br>
+
+<input type="url"
+       name="job_link"
+       placeholder="Job URL">
+
+<select name="priority">
+    <option value="High">High</option>
+    <option value="Medium" selected>Medium</option>
+    <option value="Low">Low</option>
+</select>
+
+<label><strong>Application Deadline</strong></label>
+
+<br>
+
+<input type="date"
+       name="deadline">
+
+<br><br>
+
+<label><strong>Interview Date</strong></label>
+
+<br>
+
+<input type="date"
+       name="interview_date">
+
+<br><br>
+
+<textarea
+    name="notes"
+    rows="4"
+    cols="40"
+    placeholder="Enter Job Notes"></textarea>
+
+<br><br>
+
+<button type="submit">
+    Add Job
+</button>
+```
+
+</form>
+
+<hr>
+
+<!-- Search Bar -->
+
+<form method="GET" action="/dashboard">
+
+    <input type="text"
+           name="search"
+           placeholder="Search Company">
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+<br>
+
+<!-- Status Filters -->
+
+<a href="/dashboard">All</a> |
+<a href="/dashboard?status=Applied">Applied</a> |
+<a href="/dashboard?status=Interview">Interview</a> |
+<a href="/dashboard?status=Offer">Offer</a> |
+<a href="/dashboard?status=Rejected">Rejected</a>
+
+<br><br>
+
+<!-- CSV Export -->
+
+<a href="/export">
+    Download CSV Report
+</a>
+
+<br><br>
+
+<a href="/send_mail">
+    <button type="button">
+        Send Interview Reminder
+    </button>
+</a>
+
+<hr>
+
+<h2>Job Applications</h2>
+
+<table border="1" width="100%">
+
+```
+<tr>
+    <th>Company</th>
+    <th>Role</th>
+    <th>Status</th>
+    <th>Date Applied</th>
+    <th>Deadline</th>
+    <th>Interview Date</th>
+    <th>Priority</th>
+    <th>Job Link</th>
+    <th>Notes</th>
+    <th>Action</th>
+</tr>
+
+{% for job in jobs %}
+
+<tr>
+
+    <td>{{ job.company }}</td>
+
+    <td>{{ job.role }}</td>
+
+    <td>{{ job.status }}</td>
+
+    <td>
+        {% if job.date_applied %}
+            {{ job.date_applied.strftime('%d-%m-%Y') }}
+        {% else %}
+            N/A
+        {% endif %}
+    </td>
+
+    <td>
+        {% if job.deadline %}
+            {{ job.deadline.strftime('%d-%m-%Y') }}
+        {% else %}
+            N/A
+        {% endif %}
+    </td>
+
+   <td>
+    {% if job.interview_date %}
+        {{ job.interview_date.strftime('%d-%m-%Y') }}
+    {% else %}
+        N/A
+    {% endif %}
+</td>
+
+<td>
+{% if job.priority == "High" %}
+🔴 High
+{% elif job.priority == "Medium" %}
+🟡 Medium
+{% else %}
+🟢 Low
+{% endif %}
+</td>
+
+<td>
+    {% if job.job_link %}
+        <a href="{{ job.job_link }}" target="_blank">
+            Open Job
+        </a>
+    {% else %}
+        N/A
+    {% endif %}
+</td>
+
+<td>{{ job.notes }}</td>
+
+<td>
+    <a href="/edit/{{ job.id }}">Edit</a> |
+    <a href="/delete/{{ job.id }}">Delete</a>
+</td>
+
+    <td>{{ job.notes }}</td>
+
+    <td>
+        <a href="/edit/{{ job.id }}">Edit</a> |
+        <a href="/delete/{{ job.id }}">Delete</a>
+    </td>
+
+</tr>
+
+{% endfor %}
+```
+</form>
+
+<hr>
+
+<!-- Statistics -->
+
+<h2>Statistics</h2>
+
+<hr>
+
+<h2>Application Analytics</h2>
+
+<img src="{{ url_for('static', filename='chart.png') }}"
+     width="500">
+
+<p><strong>Total Jobs:</strong> {{ total_jobs }}</p>
+
+<p><strong>Applied:</strong> {{ applied }}</p>
+
+<p><strong>Interview:</strong> {{ interview }}</p>
+
+<p><strong>Rejected:</strong> {{ rejected }}</p>
+
+<p><strong>Offers:</strong> {{ offer }}</p>
+
+<hr>
+
+<hr>
+
+<h2>AI Resume Analyzer</h2>
+
+<form action="/upload_resume"
+      method="POST"
+      enctype="multipart/form-data">
+
+    <input type="file"
+           name="resume"
+           required>
+
+    <br><br>
+
+    <textarea
+        name="job_description"
+        rows="6"
+        cols="50"
+        placeholder="Paste Job Description Here"></textarea>
+
+    <br><br>
+
+    <button type="submit">
+        Analyze Resume
+    </button>
+
+</form>
+
+<hr>
+
+<h2>Job Applications</h2>
+<h2>Upcoming Deadlines</h2>
+
+<table border="1" width="100%">
+    <tr>
+        <th>Company</th>
+        <th>Role</th>
+        <th>Deadline</th>
+    </tr>
+
+    {% for job in upcoming_deadlines %}
+    <tr>
+        <td>{{ job.company }}</td>
+        <td>{{ job.role }}</td>
+        <td>{{ job.deadline.strftime('%d-%m-%Y') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br><br>
+
+
+<h2>Upcoming Interviews</h2>
+
+<table border="1" width="100%">
+    <tr>
+        <th>Company</th>
+        <th>Role</th>
+        <th>Interview Date</th>
+    </tr>
+
+    {% for job in upcoming_interviews %}
+    <tr>
+        <td>{{ job.company }}</td>
+        <td>{{ job.role }}</td>
+        <td>{{ job.interview_date.strftime('%d-%m-%Y') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br><br>
+
+
+</div>
+
+</body>
+</html>
